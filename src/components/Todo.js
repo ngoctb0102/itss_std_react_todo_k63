@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 /* 
   【Todoのデータ構成】
@@ -26,6 +26,17 @@ function Todo() {
     { key: getKey(), text: '明日の準備をする', done: false },
     /* テストコード 終了 */
   ]);
+  const [filter, setFilter] = React.useState('全て');
+
+  const filterData = React.useMemo(() => {
+    if (filter === '全て') {
+      return items;
+    } else if (filter === '未完了') {
+      return items.filter((item) => !item.done);
+    } else if (filter === '完了済み') {
+      return items.filter((item) => item.done);
+    }
+  }, [filter, items]);
 const addTodo = (todo) => setItems([...items, todo]);
 
   return (
@@ -33,14 +44,12 @@ const addTodo = (todo) => setItems([...items, todo]);
       <div className="panel-heading">
         ITSS ToDoアプリ
       </div>
-      {items.map(item => (
-        <Input addTodo={addTodo} />
-      {items.map((item) => (
+      <Input addTodo={addTodo} />
+      <Filter filterItems={filterItems} filter={filter} setFilter={setFilter} />
+      {filterData.map((item) => (
         <TodoItem handleClick={handleClick} key={item.key} item={item} />
       ))}
-      <div className="panel-block">
-        {items.length} items
-      </div>
+      <div className="panel-block">{filterData.length} items</div>
     </div>
   );
 }
